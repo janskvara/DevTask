@@ -17,7 +17,7 @@ namespace DevTask_uTests
         public async void RegistrationAsync_PlayerServiceDontCreateNewPlayer_NoContent()
         {
             //Arrange
-            var registationDto = new RegistrationDto
+            var registationDto = new RegistrationOfPlayerDto
             {
                 UserName = "userName"
             };
@@ -27,7 +27,7 @@ namespace DevTask_uTests
             var playerContoller = new PlayerController(playerServiceMock.Object);
 
             //Act
-            var result = await playerContoller.RegistrationAsync(registationDto);
+            var result = await playerContoller.Registration(registationDto);
 
             //Assert
             Assert.IsType<NoContentResult>(result.Result);
@@ -37,7 +37,7 @@ namespace DevTask_uTests
         public async void RegistrationAsync_PlayerServiceCreateNewPlayer_CreatedAtActionResult()
         {
             //Arrange
-            var registationDto = new RegistrationDto
+            var registationDto = new RegistrationOfPlayerDto
             {
                 UserName = "userName"
             };
@@ -45,12 +45,7 @@ namespace DevTask_uTests
             {
                 Id = Guid.Empty,
                 UserName = String.Empty,
-                Wallet = new Wallet()
-                {
-                    Id = Guid.Empty,
-                    Balance = 0,
-                    Transactions = new List<Transaction>()
-                },
+                Wallet = Guid.Empty
             };
 
             var playerServiceMock = new Mock<IPlayerService>();
@@ -58,24 +53,24 @@ namespace DevTask_uTests
             var playerContoller = new PlayerController(playerServiceMock.Object);
 
             //Act
-            var result = await playerContoller.RegistrationAsync(registationDto);
+            var result = await playerContoller.Registration(registationDto);
 
             //Assert
             Assert.IsType<CreatedAtActionResult>(result.Result);
         }
 
         [Fact]
-        public async void GetBalanceAsync_PlayerServiceDidntFindPlayer_NotFoundResult()
+        public async void GetBalanceAsync_PlayerServiceDidntFindBalance_NotFoundResult()
         {
             //Arrange
             var userName = "userName";
             var playerServiceMock = new Mock<IPlayerService>();
-            playerServiceMock.Setup(_ => _.GetPlayerAsync(userName)).ReturnsAsync((Player)null);
+            playerServiceMock.Setup(_ => _.GetPlayerBalanceAsync(userName)).ReturnsAsync(decimal.MinusOne);
 
             var playerContoller = new PlayerController(playerServiceMock.Object);
 
             //Act
-            var result = await playerContoller.GetBalanceAsync(userName);
+            var result = await playerContoller.GetBalance(userName);
 
             //Assert
             Assert.IsType<NotFoundResult>(result.Result);
@@ -84,7 +79,7 @@ namespace DevTask_uTests
         [Theory]
         [InlineData(10, 10)]
         [InlineData(0, 0)]
-        public async void GetBalanceAsync_PlayerServiceFountPlayer_ReturnWalletBalance(decimal settedValue, decimal expectedValue)
+        public async void GetBalanceAsync_PlayerServiceFountBalance_ReturnWalletBalance(decimal settedValue, decimal expectedValue)
         {
             //Arrange
             var userName = "userName";
@@ -92,20 +87,15 @@ namespace DevTask_uTests
             {
                 Id = Guid.Empty,
                 UserName = userName,
-                Wallet = new Wallet()
-                {
-                    Id = Guid.Empty,
-                    Balance = settedValue,
-                    Transactions = new List<Transaction>()
-                },
+                Wallet = Guid.Empty
             };
 
             var playerServiceMock = new Mock<IPlayerService>();
-            playerServiceMock.Setup(_ => _.GetPlayerAsync(userName)).ReturnsAsync(player);
+            playerServiceMock.Setup(_ => _.GetPlayerBalanceAsync(userName)).ReturnsAsync(settedValue);
             var playerContoller = new PlayerController(playerServiceMock.Object);
 
             //Act
-            var result = await playerContoller.GetBalanceAsync(userName);
+            var result = await playerContoller.GetBalance(userName);
 
             //Assert
             Assert.IsType<CreatedAtActionResult>(result.Result);

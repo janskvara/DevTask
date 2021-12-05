@@ -9,6 +9,6 @@ namespace DevTask.Domain.Models
     {
         public Guid Id { get; set; }
         public string UserName { get; set; }
-        public Wallet Wallet { get; set; }
+        public Guid Wallet { get; set; }
     }
 }

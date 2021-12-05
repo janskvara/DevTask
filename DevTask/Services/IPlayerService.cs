@@ -7,6 +7,6 @@ namespace DevTask.Services
     {
         Task<Player> CreateNewPlayerAsync(string userName);
 
-        Task<Player> GetPlayerAsync(string userName);
+        Task<decimal> GetPlayerBalanceAsync(string userName);
     }
 }

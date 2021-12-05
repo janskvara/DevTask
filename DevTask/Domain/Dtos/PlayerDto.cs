@@ -6,6 +6,6 @@ namespace DevTask.Domain.Dtos
     {
         public Guid Id { get; set; }
         public string UserName { get; set; }
-        public decimal WalletBalance { get; set; }
+        public Guid WalletId { get; set; }
     }
 }

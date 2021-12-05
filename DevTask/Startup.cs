@@ -21,6 +21,8 @@ namespace DevTask
 
             services.AddSingleton<IPlayersRepository, PlayersRepository>();
             services.AddSingleton<IPlayerService, PlayerService>();
+            services.AddSingleton<IWalletsRepository, WalletsRepository>();
+            services.AddSingleton<IWalletService, WalletService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

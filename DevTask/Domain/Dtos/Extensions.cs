@@ -10,7 +10,7 @@ namespace DevTask.Domain.Dtos
             {
                 Id = player.Id,
                 UserName = player.UserName,
-                WalletBalance = player.Wallet.Balance,
+                WalletId = player.Wallet,
             };
         }
     }

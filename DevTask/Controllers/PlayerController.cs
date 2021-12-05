@@ -1,9 +1,6 @@
 ﻿using DevTask.Domain.Dtos;
 using DevTask.Services;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DevTask.Controllers
@@ -20,27 +17,27 @@ namespace DevTask.Controllers
 
         // POST /player
         [HttpPost]
-        public async Task<ActionResult<PlayerDto>> RegistrationAsync(RegistrationDto registrationDto)
+        public async Task<ActionResult<PlayerDto>> Registration(RegistrationOfPlayerDto registrationDto)
         {
             var player = await playerService.CreateNewPlayerAsync(registrationDto.UserName);
             if (player == null)
             {
                 return NoContent();
             }
-            return CreatedAtAction(nameof(RegistrationAsync), new { id = player.Id }, player.AsDto());
+            return CreatedAtAction(nameof(Registration), new { id = player.Id }, player.AsDto());
         }
 
         // GET /player/GetBalance/{userNameOfPlayer}
         [Route("[action]/{userName}")]
         [HttpGet()]
-        public async Task<ActionResult<PlayerDto>> GetBalanceAsync(string userName)
+        public async Task<ActionResult<decimal>> GetBalance(string userName)
         {
-            var player = await playerService.GetPlayerAsync(userName);
-            if (player == null)
+            var balance = await playerService.GetPlayerBalanceAsync(userName);
+            if (balance == decimal.MinusOne)
             {
                 return NotFound();
             }
-            return CreatedAtAction(nameof(GetBalanceAsync), new { id = player.Id }, player.AsDto());
+            return CreatedAtAction(nameof(GetBalance), new {}, balance);
         }
     }
 }

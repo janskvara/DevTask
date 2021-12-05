@@ -14,7 +14,8 @@ namespace DevTask_uTests
             //Arrange
             var playerRepositoryMock = new Mock<IPlayersRepository>();
             playerRepositoryMock.Setup(_ => _.GetAsync(string.Empty)).ReturnsAsync(new Player());
-            var playerService = new PlayerService(playerRepositoryMock.Object);
+            var walletService = new Mock<IWalletService>();
+            var playerService = new PlayerService(playerRepositoryMock.Object, walletService.Object);
 
             //Action
             var result = await playerService.CreateNewPlayerAsync(string.Empty);
@@ -30,7 +31,8 @@ namespace DevTask_uTests
             string expectedUserName = "userName";
             var playerRepositoryMock = new Mock<IPlayersRepository>();
             playerRepositoryMock.Setup(_ => _.GetAsync(expectedUserName)).ReturnsAsync((Player)null);
-            var playerService = new PlayerService(playerRepositoryMock.Object);
+            var walletService = new Mock<IWalletService>();
+            var playerService = new PlayerService(playerRepositoryMock.Object, walletService.Object);
 
             //Action
             var result = await playerService.CreateNewPlayerAsync(expectedUserName);
@@ -46,7 +48,8 @@ namespace DevTask_uTests
             string userName = "userName";
             var playerRepositoryMock = new Mock<IPlayersRepository>();
             playerRepositoryMock.Setup(_ => _.GetAsync(userName)).ReturnsAsync(new Player());
-            var playerService = new PlayerService(playerRepositoryMock.Object);
+            var walletService = new Mock<IWalletService>();
+            var playerService = new PlayerService(playerRepositoryMock.Object, walletService.Object);
 
             //Action
             var result = await playerService .CreateNewPlayerAsync(userName);
@@ -61,7 +64,8 @@ namespace DevTask_uTests
             //Arrange
             var playerRepositoryMock = new Mock<IPlayersRepository>();
             playerRepositoryMock.Setup(_ => _.GetAsync(string.Empty)).ReturnsAsync((Player)null);
-            var playerService = new PlayerService(playerRepositoryMock.Object);
+            var walletService = new Mock<IWalletService>();
+            var playerService = new PlayerService(playerRepositoryMock.Object, walletService.Object);
 
             //Action
             var result = await playerService.CreateNewPlayerAsync(string.Empty);

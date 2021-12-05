@@ -10,10 +10,12 @@ namespace DevTask.Services
     public class PlayerService: IPlayerService
     {
         private readonly IPlayersRepository playersRepository;
+        private readonly IWalletService walletService;
 
-        public PlayerService(IPlayersRepository playersRepository)
+        public PlayerService(IPlayersRepository playersRepository, IWalletService walletService)
         {
             this.playersRepository = playersRepository;
+            this.walletService = walletService;
         }
 
         public async Task<Player> CreateNewPlayerAsync(string userName)
@@ -27,22 +29,22 @@ namespace DevTask.Services
             player = new Player {
                 Id = Guid.NewGuid(),
                 UserName = userName,
-                Wallet = new Wallet()
-                {
-                    Id = Guid.NewGuid(),
-                    Balance = 0,
-                    Transactions = new List<Transaction>()
-                },
+                Wallet = await walletService.CreateWalletAsync(),
             };
 
             await playersRepository.AddAsync(player);
             return player;
         }
 
-        public async Task<Player> GetPlayerAsync(string userName)
+        public async Task<decimal> GetPlayerBalanceAsync(string userName)
         {
             var player = await playersRepository.GetAsync(userName);
-            return player;
+            if (player == null)
+            {
+                return decimal.MinusOne;
+            }
+            var balance = await walletService.GetBalanceAsync(player.Wallet);
+            return balance;
         }
     }
 }
