@@ -29,18 +29,13 @@ namespace DevTask_uTests
         public async void GetBalanceAsync_IdExists_ReturnBalanceOfWallet()
         {
             //Arrange
-            var wallet = new Wallet
-            {
-                Id = Guid.Empty,
-                Balance = 10,
-                Transactions = new List<Transaction>()
-            };
+            var wallet = GetWallet(10);
             var walletsRepositoryMock = new Mock<IWalletsRepository>();
-            walletsRepositoryMock.Setup(_ => _.GetAsync(Guid.Empty)).ReturnsAsync(wallet);
+            walletsRepositoryMock.Setup(_ => _.GetAsync(wallet.Id)).ReturnsAsync(wallet);
             var walletService = new WalletService(walletsRepositoryMock.Object);
 
             //Action
-            var result = await walletService.GetBalanceAsync(Guid.Empty);
+            var result = await walletService.GetBalanceAsync(wallet.Id);
 
             //Assert
             Assert.Equal(10, result);
@@ -83,26 +78,15 @@ namespace DevTask_uTests
         public async void RegisterTransaction_TypeOfTransactionIsDepositeOrWin_ReturnStateAccepted(ETypeOfTransaction typeOfTransaction)
         {
             //Arrange
-            Guid id = Guid.NewGuid();
-            Guid idOfTransaction = Guid.NewGuid();
-            var transaction = new Transaction() {
-                Id = idOfTransaction,
-                Type = typeOfTransaction,
-                Amount = 0,
-                State = EStateOfTransaction.NotDefine                
-            };
-            var wallet = new Wallet()
-            {
-                Id = id,
-                Balance = 10,
-                Transactions = new List<Transaction>()
-            };
+            var transaction = GetTransaction(typeOfTransaction, 0);
+            var wallet = GetWallet(10);
             var walletsRepositoryMock = new Mock<IWalletsRepository>();
-            walletsRepositoryMock.Setup(_ => _.GetAsync(id)).ReturnsAsync(wallet);
+            walletsRepositoryMock.Setup(_ => _.GetAsync(wallet.Id)).ReturnsAsync(wallet);
+            walletsRepositoryMock.Setup(_ => _.GetTransaction(wallet.Id, transaction.IdempotencyKey)).ReturnsAsync((Transaction)null);
             var walletService = new WalletService(walletsRepositoryMock.Object);
 
             //Action
-            var result = await walletService.RegisterTransaction(id, transaction);
+            var result = await walletService.RegisterTransaction(wallet.Id, transaction);
 
             //Assert
             Assert.Equal(EStateOfTransaction.Accepted, result);
@@ -115,27 +99,16 @@ namespace DevTask_uTests
                                                                 ETypeOfTransaction typeOfTransaction, EStateOfTransaction expectedStateOfTransaction)
         {
             //Arrange
-            Guid id = Guid.NewGuid();
-            Guid idOfTransaction = Guid.NewGuid();
-            var transaction = new Transaction()
-            {
-                Id = idOfTransaction,
-                Type = typeOfTransaction,
-                Amount = amount,
-                State = EStateOfTransaction.NotDefine
-            };
-            var wallet = new Wallet()
-            {
-                Id = id,
-                Balance = 10,
-                Transactions = new List<Transaction>()
-            };
+            var transaction = GetTransaction(typeOfTransaction, amount);
+            var wallet = GetWallet(10);
             var walletsRepositoryMock = new Mock<IWalletsRepository>();
-            walletsRepositoryMock.Setup(_ => _.GetAsync(id)).ReturnsAsync(wallet);
+            walletsRepositoryMock.Setup(_ => _.GetAsync(wallet.Id)).ReturnsAsync(wallet);
+            walletsRepositoryMock.Setup(_ => _.GetTransaction(wallet.Id, transaction.IdempotencyKey)).ReturnsAsync((Transaction)null);
+            walletsRepositoryMock.Setup(_ => _.GetTransaction(wallet.Id, transaction.IdempotencyKey)).ReturnsAsync((Transaction)null);
             var walletService = new WalletService(walletsRepositoryMock.Object);
 
             //Action
-            var result = await walletService.RegisterTransaction(id, transaction);
+            var result = await walletService.RegisterTransaction(wallet.Id, transaction);
 
             //Assert
             Assert.Equal(expectedStateOfTransaction, result);
@@ -149,30 +122,18 @@ namespace DevTask_uTests
                                                                 ETypeOfTransaction typeOfTransaction, decimal expectedBalance)
         {
             //Arrange
-            Guid id = Guid.NewGuid();
-            Guid idOfTransaction = Guid.NewGuid();
-            var transaction = new Transaction()
-            {
-                Id = idOfTransaction,
-                Type = typeOfTransaction,
-                Amount = amount,
-                State = EStateOfTransaction.NotDefine
-            };
-            var wallet = new Wallet()
-            {
-                Id = id,
-                Balance = 10,
-                Transactions = new List<Transaction>()
-            };
+            var transaction = GetTransaction(typeOfTransaction, amount);
+            var wallet = GetWallet(10);
             var walletsRepositoryMock = new Mock<IWalletsRepository>();
-            walletsRepositoryMock.Setup(_ => _.GetAsync(id)).ReturnsAsync(wallet);
+            walletsRepositoryMock.Setup(_ => _.GetAsync(wallet.Id)).ReturnsAsync(wallet);
+            walletsRepositoryMock.Setup(_ => _.GetTransaction(wallet.Id, transaction.IdempotencyKey)).ReturnsAsync((Transaction)null);
             var walletService = new WalletService(walletsRepositoryMock.Object);
 
             //Action
-            var result = await walletService.RegisterTransaction(id, transaction);
+            var result = await walletService.RegisterTransaction(wallet.Id, transaction);
 
             //Assert
-            walletsRepositoryMock.Verify(_ => _.SetBalanceAsync(id, expectedBalance), Times.Once);
+            walletsRepositoryMock.Verify(_ => _.SetBalanceAsync(wallet.Id, expectedBalance), Times.Once);
         }
 
         [Theory]
@@ -181,32 +142,65 @@ namespace DevTask_uTests
                                                                 ETypeOfTransaction typeOfTransaction, decimal expectedBalance)
         {
             //Arrange
-            Guid id = Guid.NewGuid();
-            Guid idOfTransaction = Guid.NewGuid();
-            var transaction = new Transaction()
-            {
-                Id = idOfTransaction,
-                Type = typeOfTransaction,
-                Amount = amount,
-                State = EStateOfTransaction.NotDefine
-            };
-            var wallet = new Wallet()
-            {
-                Id = id,
-                Balance = 10,
-                Transactions = new List<Transaction>()
-            };
+            var transaction = GetTransaction(typeOfTransaction, amount);
+            var wallet = GetWallet(10);
             var walletsRepositoryMock = new Mock<IWalletsRepository>();
-            walletsRepositoryMock.Setup(_ => _.GetAsync(id)).ReturnsAsync(wallet);
+            walletsRepositoryMock.Setup(_ => _.GetAsync(wallet.Id)).ReturnsAsync(wallet);
+            walletsRepositoryMock.Setup(_ => _.GetTransaction(wallet.Id, transaction.IdempotencyKey)).ReturnsAsync((Transaction)null);
             var walletService = new WalletService(walletsRepositoryMock.Object);
 
             //Action
-            var result = await walletService.RegisterTransaction(id, transaction);
+            var result = await walletService.RegisterTransaction(wallet.Id, transaction);
 
             //Assert
-            walletsRepositoryMock.Verify(_ => _.SetBalanceAsync(id, expectedBalance), Times.Never);
+            walletsRepositoryMock.Verify(_ => _.SetBalanceAsync(wallet.Id, expectedBalance), Times.Never);
         }
 
+        [Theory]
+        [InlineData(EStateOfTransaction.Rejected, EStateOfTransaction.Rejected)]
+        [InlineData(EStateOfTransaction.Accepted, EStateOfTransaction.Accepted)]
+        public async void RegisterTransaction_GetTransactionIsNotNull_StateFromTransactionWhichWasReturnedFromGetTransaction(EStateOfTransaction stateOfTransaction,
+                                                                                                            EStateOfTransaction expectedStateOfTransaction)
+        {
+            //Arrange
+            var transaction = GetTransaction(ETypeOfTransaction.Deposite, 10);
+            var transactionWithIdempotencyKey = GetTransaction(ETypeOfTransaction.Deposite, 10, stateOfTransaction);
+            var wallet = GetWallet(10);
+            var walletsRepositoryMock = new Mock<IWalletsRepository>();
+            walletsRepositoryMock.Setup(_ => _.GetAsync(wallet.Id)).ReturnsAsync(wallet);
+            walletsRepositoryMock.Setup(_ => _.GetTransaction(wallet.Id, transaction.IdempotencyKey)).ReturnsAsync(transactionWithIdempotencyKey);
+            var walletService = new WalletService(walletsRepositoryMock.Object);
 
+            //Action
+            var result = await walletService.RegisterTransaction(wallet.Id, transaction);
+
+            //Assert
+            Assert.Equal(expectedStateOfTransaction, result);
+        }
+
+        private Wallet GetWallet(decimal balance)
+        {
+            return new Wallet()
+            {
+                Id = Guid.NewGuid(),
+                Balance = balance,
+                Transactions = new List<Transaction>()
+            };
+        }
+        private Transaction GetTransaction(ETypeOfTransaction typeOfTransaction, decimal amount)
+        {
+            return GetTransaction(typeOfTransaction, amount, EStateOfTransaction.NotDefine);
+        }
+        private Transaction GetTransaction(ETypeOfTransaction typeOfTransaction, decimal amount, EStateOfTransaction stateOfTransaction)
+        {
+            return new Transaction()
+            {
+                Id = Guid.NewGuid(),
+                Type = typeOfTransaction,
+                Amount = amount,
+                State = stateOfTransaction,
+                IdempotencyKey = "IdempotencyKey"
+            };
+        }
     }
 }

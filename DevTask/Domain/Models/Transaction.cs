@@ -11,5 +11,7 @@ namespace DevTask.Domain.Models
         public ETypeOfTransaction Type { get; set; }
 
         public EStateOfTransaction State { get; set; }
+
+        public string IdempotencyKey { get; set; }
     }
 }

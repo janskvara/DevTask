@@ -10,5 +10,8 @@ namespace DevTask.Domain.Dtos
 
         [Required]
         public ETypeOfTransaction Type { get; set; }
+
+        [Required]
+        public string IdempotencyKey { get; set; }
     }
 }

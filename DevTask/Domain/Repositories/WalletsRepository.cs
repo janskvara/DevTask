@@ -35,5 +35,11 @@ namespace DevTask.Domain.Repositories
             wallets[index].Transactions.Add(transaction);
             await Task.CompletedTask;
         }
+
+        public async Task<Transaction> GetTransaction(Guid id, string idempotencyKey)
+        {
+            var index = wallets.FindIndex(_ => _.Id == id);
+            return await Task.FromResult(wallets[index].Transactions.FirstOrDefault<Transaction>(_ => _.IdempotencyKey == idempotencyKey));
+        }
     }
 }

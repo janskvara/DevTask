@@ -52,7 +52,6 @@ namespace DevTask.Services
                 case ETypeOfTransaction.Win:
                     newBalance += transaction.Amount;
                     transaction.State = EStateOfTransaction.Accepted;
-                    await walletsRepository.SetBalanceAsync(idOfWallet, newBalance);
                     break;
                 case ETypeOfTransaction.Stake:
 
@@ -64,13 +63,21 @@ namespace DevTask.Services
                     {
                         newBalance -= transaction.Amount;
                         transaction.State = EStateOfTransaction.Accepted;
-                        await walletsRepository.SetBalanceAsync(idOfWallet, newBalance);
                     }
                     break;
             }
 
-            await walletsRepository.AddTransactionAsync(idOfWallet, transaction);
-            return transaction.State;
+            var transactionWithIdempotencyKey = await walletsRepository.GetTransaction(idOfWallet, transaction.IdempotencyKey);
+            if (transactionWithIdempotencyKey == null)
+            {
+                if(transaction.State == EStateOfTransaction.Accepted)
+                {
+                    await walletsRepository.SetBalanceAsync(idOfWallet, newBalance);
+                }
+                await walletsRepository.AddTransactionAsync(idOfWallet, transaction);
+                return transaction.State;
+            }
+            return transactionWithIdempotencyKey.State;
         }
 
         public async Task<IEnumerable<Transaction>> GetTransactionsAsync(Guid id)

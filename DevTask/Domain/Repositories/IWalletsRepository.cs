@@ -13,5 +13,7 @@ namespace DevTask.Domain.Repositories
         Task<decimal> SetBalanceAsync(Guid id, decimal newBalance);
 
         Task AddTransactionAsync(Guid id, Transaction transaction);
+
+        Task<Transaction> GetTransaction(Guid id, string idempotencyKey);
     }
 }

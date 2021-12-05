@@ -31,7 +31,8 @@ namespace DevTask.Domain.Dtos
                 Id = Guid.NewGuid(),
                 Amount = Math.Abs(registrationOfTransaction.Amount),
                 Type = registrationOfTransaction.Type,
-                State = EStateOfTransaction.NotDefine
+                State = EStateOfTransaction.NotDefine,
+                IdempotencyKey = registrationOfTransaction.IdempotencyKey
             };
         }
     }
