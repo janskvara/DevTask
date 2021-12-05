@@ -3,6 +3,7 @@ using DevTask.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using DevTask.Domain.Models;
+using System.Collections.Generic;
 
 namespace DevTask.Controllers
 {
@@ -52,6 +53,24 @@ namespace DevTask.Controllers
                 return NotFound();
             }
             return CreatedAtAction(nameof(GetBalance), new {}, balance);
+        }
+
+        // GET /player/{userNameOfPlayer}/GetTransactions
+        [Route("{userName}/[action]")]
+        [HttpGet()]
+        public async Task<ActionResult<Transaction>> GetTransactions(string userName)
+        {
+            var transactions = await playerService.GetPlayerTransactionseAsync(userName);
+            if (transactions == null)
+            {
+                return NotFound();
+            }
+            IList<TransactionDto> transactionDtos = new List<TransactionDto>();
+            foreach (Transaction transaction in transactions)
+            {
+                transactionDtos.Add(transaction.AsDto());
+            }
+            return CreatedAtAction(nameof(GetTransactions), new { }, transactionDtos);
         }
     }
 }

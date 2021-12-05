@@ -73,5 +73,15 @@ namespace DevTask.Services
             await walletsRepository.AddTransactionAsync(idOfWallet, transaction);
             return transaction.State;
         }
+
+        public async Task<IEnumerable<Transaction>> GetTransactionsAsync(Guid id)
+        {
+            var wallet = await walletsRepository.GetAsync(id);
+            if (wallet == null)
+            {
+                return null;
+            }
+            return wallet.Transactions;
+        }
     }
 }

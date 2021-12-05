@@ -56,5 +56,16 @@ namespace DevTask.Services
             var balance = await walletService.GetBalanceAsync(player.Wallet);
             return balance;
         }
+
+        public async Task<IList<Transaction>> GetPlayerTransactionseAsync(string userName)
+        {
+            var player = await playersRepository.GetAsync(userName);
+            if (player == null)
+            {
+                return null;
+            }
+            var transactions = await walletService.GetTransactionsAsync(player.Wallet);
+            return transactions.ToList();
+        }
     }
 }

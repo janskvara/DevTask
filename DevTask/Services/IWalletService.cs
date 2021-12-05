@@ -13,5 +13,7 @@ namespace DevTask.Services
         Task<decimal> GetBalanceAsync(Guid id);
 
         Task<EStateOfTransaction> RegisterTransaction(Guid idOfWallet, Transaction transaction);
+
+        Task<IEnumerable<Transaction>> GetTransactionsAsync(Guid id);
     }
 }

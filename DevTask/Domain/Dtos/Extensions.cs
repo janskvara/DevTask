@@ -15,6 +15,15 @@ namespace DevTask.Domain.Dtos
             };
         }
 
+        public static TransactionDto AsDto(this Transaction transaction)
+        {
+            return new TransactionDto()
+            {
+                Id = transaction.Id,
+                Amount = transaction.Amount,
+            };
+        }
+
         public static Transaction ToModel(this RegistrationOfTransactionDto registrationOfTransaction)
         {
             return new Transaction()
