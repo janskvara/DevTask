@@ -45,5 +45,19 @@ namespace DevTask_uTests
             //Assert
             Assert.Equal(10, result);
         }
+
+        [Fact]
+        public async void CreateWalletAsync_BalanceIsZeroInNewWallet()
+        {
+            //Arrange
+            var walletsRepositoryMock = new Mock<IWalletsRepository>();
+            var walletService = new WalletService(walletsRepositoryMock.Object);
+
+            //Action
+            var result = await walletService.CreateWalletAsync();
+
+            //Assert
+            walletsRepositoryMock.Verify(_ => _.AddAsync(It.Is<Wallet>(_ => _.Balance == 0)));
+        }
     }
 }
