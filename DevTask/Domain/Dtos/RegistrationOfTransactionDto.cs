@@ -7,6 +7,7 @@ namespace DevTask.Domain.Dtos
     {
         [Required]
         public decimal Amount { get; set; }
+
         [Required]
         public ETypeOfTransaction Type { get; set; }
     }

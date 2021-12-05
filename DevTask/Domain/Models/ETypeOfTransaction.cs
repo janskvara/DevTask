@@ -1,5 +1,4 @@
-﻿
-namespace DevTask.Domain.Models
+﻿namespace DevTask.Domain.Models
 {
     public enum ETypeOfTransaction: byte
     {

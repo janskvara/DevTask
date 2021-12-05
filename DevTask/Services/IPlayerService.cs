@@ -1,5 +1,4 @@
-﻿using DevTask.Domain.Dtos;
-using DevTask.Domain.Models;
+﻿using DevTask.Domain.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

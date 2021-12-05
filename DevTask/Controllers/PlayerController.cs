@@ -42,7 +42,7 @@ namespace DevTask.Controllers
             return CreatedAtAction(nameof(Registration), new {}, stateOfTransaction.ToString());
         }
 
-        // GET /player/{userNameOfPlayer}/GetBalance/
+        // GET /player/{userName}/GetBalance/
         [Route("{userName}/[action]")]
         [HttpGet()]
         public async Task<ActionResult<decimal>> GetBalance(string userName)
@@ -55,7 +55,7 @@ namespace DevTask.Controllers
             return CreatedAtAction(nameof(GetBalance), new {}, balance);
         }
 
-        // GET /player/{userNameOfPlayer}/GetTransactions
+        // GET /player/{userName}/GetTransactions
         [Route("{userName}/[action]")]
         [HttpGet()]
         public async Task<ActionResult<Transaction>> GetTransactions(string userName)
