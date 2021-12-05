@@ -8,7 +8,7 @@ namespace DevTask.Domain.Repositories
 {
     public class WalletsRepository : IWalletsRepository
     {
-        private readonly IList<Wallet> wallets = new List<Wallet>();
+        private readonly List<Wallet> wallets = new List<Wallet>();
 
         public async Task<Wallet> GetAsync(Guid id)
         {
@@ -19,6 +19,20 @@ namespace DevTask.Domain.Repositories
         public async Task AddAsync(Wallet wallet)
         {
             wallets.Add(wallet);
+            await Task.CompletedTask;
+        }
+
+        public async Task<decimal> SetBalanceAsync(Guid id, decimal newBalance)
+        {
+            var index = wallets.FindIndex(_ => _.Id == id);
+            wallets[index].Balance = newBalance;
+            return await Task.FromResult(wallets[index].Balance);
+        }
+
+        public async Task AddTransactionAsync(Guid id, Transaction transaction)
+        {
+            var index = wallets.FindIndex(_ => _.Id == id);
+            wallets[index].Transactions.Add(transaction);
             await Task.CompletedTask;
         }
     }

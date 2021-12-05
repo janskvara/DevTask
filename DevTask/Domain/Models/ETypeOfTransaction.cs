@@ -1,15 +1,15 @@
 ﻿
 namespace DevTask.Domain.Models
 {
-    public enum ETypeOfTransaction
+    public enum ETypeOfTransaction: byte
     {
         // increments balance
-        Deposite,
+        Deposite = 0,
 
         // decrements balance
-        Stake,
+        Stake = 1,
 
         // increments balance
-        Win
+        Win = 2
     }
 }

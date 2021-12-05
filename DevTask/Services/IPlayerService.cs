@@ -1,4 +1,5 @@
-﻿using DevTask.Domain.Models;
+﻿using DevTask.Domain.Dtos;
+using DevTask.Domain.Models;
 using System.Threading.Tasks;
 
 namespace DevTask.Services
@@ -8,5 +9,7 @@ namespace DevTask.Services
         Task<Player> CreateNewPlayerAsync(string userName);
 
         Task<decimal> GetPlayerBalanceAsync(string userName);
+
+        Task<EStateOfTransaction> AddTransactionAsync(string userName, Transaction newTransaction);
     }
 }

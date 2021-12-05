@@ -2,6 +2,7 @@
 using DevTask.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using DevTask.Domain.Models;
 
 namespace DevTask.Controllers
 {
@@ -27,8 +28,21 @@ namespace DevTask.Controllers
             return CreatedAtAction(nameof(Registration), new { id = player.Id }, player.AsDto());
         }
 
-        // GET /player/GetBalance/{userNameOfPlayer}
-        [Route("[action]/{userName}")]
+        // POST /player/{userName}/Transaction
+        [Route("{userName}/[action]")]
+        [HttpPost]
+        public async Task<ActionResult<string>> Transaction(string userName, RegistrationOfTransactionDto registrationDto)
+        {
+            var stateOfTransaction = await playerService.AddTransactionAsync(userName, registrationDto.ToModel());
+            if (stateOfTransaction == EStateOfTransaction.UserDoesntExist || stateOfTransaction == EStateOfTransaction.WalletDoesntFound)
+            {
+                return NotFound();
+            }
+            return CreatedAtAction(nameof(Registration), new {}, stateOfTransaction.ToString());
+        }
+
+        // GET /player/{userNameOfPlayer}/GetBalance/
+        [Route("{userName}/[action]")]
         [HttpGet()]
         public async Task<ActionResult<decimal>> GetBalance(string userName)
         {

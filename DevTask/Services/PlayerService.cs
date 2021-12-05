@@ -18,6 +18,16 @@ namespace DevTask.Services
             this.walletService = walletService;
         }
 
+        public async Task<EStateOfTransaction> AddTransactionAsync(string userName, Transaction newTransaction)
+        {
+            var player = await playersRepository.GetAsync(userName);
+            if (player == null)
+            {
+                return EStateOfTransaction.UserDoesntExist;
+            }
+            return await walletService.RegisterTransaction(player.Wallet, newTransaction);
+        }
+
         public async Task<Player> CreateNewPlayerAsync(string userName)
         {
             var player =  await playersRepository.GetAsync(userName);

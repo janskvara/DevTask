@@ -1,7 +1,5 @@
 ﻿using DevTask.Domain.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DevTask.Domain.Repositories
@@ -10,5 +8,7 @@ namespace DevTask.Domain.Repositories
     {
         Task<Wallet> GetAsync(Guid id);
         Task AddAsync(Wallet wallet);
+        Task<decimal> SetBalanceAsync(Guid id, decimal newBalance);
+        Task AddTransactionAsync(Guid id, Transaction transaction);
     }
 }

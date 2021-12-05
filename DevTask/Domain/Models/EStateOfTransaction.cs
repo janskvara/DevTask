@@ -5,6 +5,12 @@ namespace DevTask.Domain.Models
     {
         Rejected,
 
-        Accepted
+        Accepted,
+
+        UserDoesntExist,
+
+        WalletDoesntFound,
+
+        NotDefine
     }
 }

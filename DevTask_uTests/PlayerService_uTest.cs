@@ -3,6 +3,7 @@ using DevTask.Domain.Models;
 using DevTask.Services;
 using Moq;
 using Xunit;
+using System;
 
 namespace DevTask_uTests
 {
@@ -72,6 +73,48 @@ namespace DevTask_uTests
 
             //Assert
             playerRepositoryMock.Verify(_ => _.AddAsync(It.IsAny<Player>()), Times.Once);
+        }
+
+        [Fact]
+        public async void AddTransactionAsync_UserNameDoesntExist_ReturnUserDoesntExist()
+        {
+            //Arrange
+            var playerRepositoryMock = new Mock<IPlayersRepository>();
+            playerRepositoryMock.Setup(_ => _.GetAsync(string.Empty)).ReturnsAsync((Player)null);
+            var walletService = new Mock<IWalletService>();
+            var playerService = new PlayerService(playerRepositoryMock.Object, walletService.Object);
+
+            //Action
+            var result = await playerService.AddTransactionAsync(string.Empty, new Transaction());
+
+            //Assert
+            Assert.Equal(EStateOfTransaction.UserDoesntExist, result);
+        }
+
+        [Fact]
+        public async void AddTransactionAsync_UserNameExists_RegisterTransactionCallsOnceWithWalletIdAndInputTransaction()
+        {
+            //Arrange
+            string userName = "userName";
+            Guid walletId = Guid.NewGuid();
+            var player = new Player
+            {
+                Id = Guid.Empty,
+                UserName = userName,
+                Wallet = walletId
+            };
+            var transaction = new Transaction();
+
+            var playerRepositoryMock = new Mock<IPlayersRepository>();
+            playerRepositoryMock.Setup(_ => _.GetAsync(userName)).ReturnsAsync(player);
+            var walletService = new Mock<IWalletService>();
+            var playerService = new PlayerService(playerRepositoryMock.Object, walletService.Object);
+
+            //Action
+            var result = await playerService.AddTransactionAsync(userName, transaction);
+
+            //Assert
+            walletService.Verify(_ => _.RegisterTransaction(It.Is<Guid>(_ => _ == walletId), transaction), Times.Once);
         }
     }
 }
